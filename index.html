@@ -487,6 +487,17 @@ html, body { overflow-x: clip; }
 @media (max-width: 767px) { .story .site-header .btn--amber { display: none; } }
 .story .about .ph, .story .about .ph--dark { display: inline-block; padding: .35rem .7rem; border-radius: 8px; border: 1px dashed rgba(185,243,60,.7); background: rgba(185,243,60,.14); color: #f6e7c6; text-shadow: none; font-weight: 600; }
 .story .footer .ph, .story .footer .ph--dark { padding: .05rem .4rem; border-radius: 5px; border: 1px dashed rgba(185,243,60,.7); background: rgba(185,243,60,.14); color: #f6e7c6; text-shadow: none; }
+/* 26 Nov: the stage keeps the tallest phone height, so the address bar sliding away never resizes (and clears) the film */
+.story .story-stage { bottom: auto; height: 100vh; height: 100lvh; }
+/* 26 Nov (user): the range stacks like PNB's course deck: each card slides up and settles over the one before */
+.story .range .cards { grid-template-columns: 1fr; gap: 22px; counter-reset: rc; }
+.story .range .card { position: sticky; top: calc(84px + var(--i) * 14px); background: linear-gradient(160deg, #11402c, #062216); border: 1px solid rgba(255,255,255,.12); border-top: 3px solid var(--amber); box-shadow: 0 -12px 40px -16px rgba(0,0,0,.55), 0 22px 50px -28px rgba(0,0,0,.6); -webkit-backdrop-filter: none; backdrop-filter: none; }
+.story .range .card:nth-child(even) { background: linear-gradient(160deg, #18472f, #0a2a1c); }
+.story .range .card:hover { transform: none; }
+.story .range .card h3::before { counter-increment: rc; content: "0" counter(rc); display: block; margin-bottom: .2rem; font-family: var(--font-display); font-size: 1.5rem; line-height: 1; color: var(--amber); }
+.story .range .card:nth-child(1) { --i: 0; } .story .range .card:nth-child(2) { --i: 1; } .story .range .card:nth-child(3) { --i: 2; }
+.story .range .card:nth-child(4) { --i: 3; } .story .range .card:nth-child(5) { --i: 4; } .story .range .card:nth-child(6) { --i: 5; }
+@media (min-width: 900px) { .story .range .cards { grid-template-columns: 1fr; } }
 
 /* ===== Joint roller v3 (24 Nov): photoreal tray, buttons above the picture. =====
    Geometry from the stills (1000x1000): grinder centre 33.6% / 34.8%, radius 18.8%; paper 44.4% 62.8% to 90.2% 81.4%.
@@ -502,7 +513,7 @@ html, body { overflow-x: clip; }
 .gm__meter { height: 6px; border-radius: 99px; background: rgba(255,255,255,.14); overflow: hidden; }
 .gm__meter span { display: block; height: 100%; width: 0; background: var(--amber); border-radius: inherit; transition: width .2s ease; }
 
-.gm__scene { position: relative; aspect-ratio: 1; border-radius: 26px; overflow: hidden; box-shadow: 0 30px 70px rgba(0,20,10,.45); touch-action: none; user-select: none; -webkit-user-select: none; background: #24623f; }
+.gm__scene { position: relative; aspect-ratio: 1; border-radius: 26px; overflow: hidden; box-shadow: 0 30px 70px rgba(0,20,10,.45); touch-action: pan-y; user-select: none; -webkit-user-select: none; background: #24623f; }
 .gm__scene::after { content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; z-index: 5;
   box-shadow: inset 0 0 0 9px #1e5a39, inset 0 0 0 10px rgba(255,255,255,.12), inset 0 14px 22px rgba(0,0,0,.22), inset 0 -2px 0 10px rgba(0,0,0,.08); }
 .gm__tray { position: absolute; inset: 0; transform: scale(1.12); transform-origin: 50% 50%; }
@@ -537,7 +548,7 @@ html, body { overflow-x: clip; }
 .gm:not([data-stage="fill"]) .gm__bud, .gm:not([data-stage="fill"]):not([data-stage="lid"]) .gm__lidsprite { display: none; }
 
 /* The closed lid, turned by the visitor. */
-.gm__lid { position: absolute; left: calc(var(--gx) - var(--gr)); top: calc(var(--gy) - var(--gr)); width: calc(var(--gr) * 2); aspect-ratio: 1; border-radius: 50%; cursor: grab; opacity: 0; pointer-events: none; transition: transform .7s cubic-bezier(.2,.8,.2,1), opacity .5s ease; filter: drop-shadow(0 10px 14px rgba(0,0,0,.35)); }
+.gm__lid { touch-action: none; position: absolute; left: calc(var(--gx) - var(--gr)); top: calc(var(--gy) - var(--gr)); width: calc(var(--gr) * 2); aspect-ratio: 1; border-radius: 50%; cursor: grab; opacity: 0; pointer-events: none; transition: transform .7s cubic-bezier(.2,.8,.2,1), opacity .5s ease; filter: drop-shadow(0 10px 14px rgba(0,0,0,.35)); }
 .gm[data-stage="grind"] .gm__lid { opacity: 1; pointer-events: auto; }
 .gm__lid-face { position: absolute; inset: 0; border-radius: 50%; background: url(game/t1-lid.webp) no-repeat; background-size: 265.96% 265.96%; background-position: 23.72% 25.64%; will-change: transform; }
 .gm__lid-face::after { content: ""; position: absolute; left: 50%; top: 7%; width: 4%; height: 9%; margin-left: -2%; border-radius: 3px; background: rgba(120,80,20,.55); box-shadow: 0 0 0 1px rgba(255,230,170,.35); }
@@ -562,6 +573,40 @@ html, body { overflow-x: clip; }
 .gm__filter-card { position: absolute; inset: 0; border-radius: 2px; box-shadow: 0 3px 6px rgba(0,0,0,.28);
   background: repeating-linear-gradient(90deg, rgba(0,0,0,0) 0 22%, rgba(90,60,25,.25) 22% 23%), linear-gradient(180deg, #e7cfa4, #d4b483); transition: opacity .25s ease; }
 .gm__filter-tip { position: absolute; inset: 0; opacity: 0; border-radius: 6px; background: url(game/t0-buds.webp) no-repeat; background-size: 900.9% 2127.7%; background-position: 49.9% 74.1%; transition: opacity .25s ease; }
+
+/* 26 Nov (user): play with fingers only. The action buttons stay for keyboard and screen-reader users but are hidden until focused.
+   The tray scrolls the page (pan-y); only the bits you drag (buds, lid, filter, grinder, paper) hold the finger. */
+.gm__controls > :not([data-g-reset]):not(:focus-within) { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.gm__zone { position: absolute; z-index: 2; touch-action: none; display: none; }
+.gm__zone--grinder { left: calc(var(--gx) - var(--gr)); top: calc(var(--gy) - var(--gr)); width: calc(var(--gr) * 2); aspect-ratio: 1; border-radius: 50%; }
+.gm__zone--paper { left: 40%; top: 56%; width: 54%; height: 32%; }
+.gm[data-stage="load"] .gm__zone--grinder, .gm[data-stage="roll"] .gm__zone--paper { display: block; }
+/* Pop-up guide: a finger shows the move, a short line says it. Hides when you touch the tray, comes back on the next step. */
+.gm__finger { position: absolute; z-index: 4; width: 8%; aspect-ratio: 1; margin: -4% 0 0 -4%; border-radius: 50%; pointer-events: none; background: rgba(255,255,255,.85); box-shadow: 0 0 0 6px rgba(255,255,255,.3), 0 6px 16px rgba(0,0,0,.4); opacity: 0; transition: opacity .3s; }
+.gm:not(.tip-off) .gm__finger { opacity: 1; }
+.gm[data-stage="fill"] .gm__finger { animation: gm-f-fill 2.2s ease-in-out infinite; }
+.gm[data-stage="lid"] .gm__finger { animation: gm-f-lid 2.2s ease-in-out infinite; }
+.gm[data-stage="grind"] .gm__finger { animation: gm-f-grind 1.8s linear infinite; }
+.gm[data-stage="load"] .gm__finger { animation: gm-f-load 2.4s ease-in-out infinite; }
+.gm[data-stage="roll"] .gm__finger { animation: gm-f-roll 1.4s ease-in-out infinite; }
+.gm[data-stage="done"] .gm__finger { display: none; }
+@keyframes gm-f-fill { 0%,15% { left: 20%; top: 63.6%; transform: scale(1.15); } 70%,100% { left: 33.6%; top: 34.8%; transform: scale(1); } }
+@keyframes gm-f-lid { 0%,15% { left: 76%; top: 33.2%; transform: scale(1.15); } 70%,100% { left: 33.6%; top: 34.8%; transform: scale(1); } }
+@keyframes gm-f-grind { 0% { left: 45%; top: 34.8%; } 25% { left: 33.6%; top: 46%; } 50% { left: 22%; top: 34.8%; } 75% { left: 33.6%; top: 23.5%; } 100% { left: 45%; top: 34.8%; } }
+@keyframes gm-f-load { 0%,15% { left: 33.6%; top: 34.8%; transform: scale(1.15); } 70%,100% { left: 66%; top: 72%; transform: scale(1); } }
+@keyframes gm-f-roll { 0%,100% { left: 68%; top: 79%; } 50% { left: 68%; top: 65%; } }
+.gm__tip { position: absolute; z-index: 6; left: 5%; right: 5%; bottom: 5%; display: flex; align-items: center; gap: .7rem; padding: .8rem 1rem; border-radius: 16px; background: rgba(5,34,22,.78); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); border: 1px solid rgba(185,243,60,.35); color: #fff; font-weight: 600; font-size: .98rem; line-height: 1.35; pointer-events: none; transition: opacity .3s, transform .3s; }
+.gm__tip p { margin: 0; }
+.gm__tip-icon { font-size: 1.5rem; }
+.gm.tip-off .gm__tip, .gm[data-stage="done"] .gm__tip { opacity: 0; transform: translateY(8px); }
+@media (prefers-reduced-motion: reduce) { .gm__finger { animation-duration: 4s !important; } }
+/* the step instruction is a pop-up bubble above the tray, so it never covers the buds or paper */
+.gm__hint { position: relative; display: flex; align-items: center; gap: .7rem; padding: .85rem 1rem; border-radius: 16px; background: rgba(5,34,22,.82); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); border: 1px solid rgba(185,243,60,.4); color: #fff; font-weight: 600; text-shadow: none; }
+.gm__hint:empty { display: none; }
+.gm__hint::before { content: "👆"; font-size: 1.5rem; }
+.gm__hint::after { content: ""; position: absolute; left: 2.2rem; bottom: -8px; width: 14px; height: 14px; background: inherit; border-right: 1px solid rgba(185,243,60,.4); border-bottom: 1px solid rgba(185,243,60,.4); transform: rotate(45deg); }
+.gm__hint.pop { animation: rl-pop .45s cubic-bezier(.2,.8,.2,1) both; }
+.gm__bar { order: 0; }
 .logo__img { width: 40px; height: 40px; border-radius: 50%; box-shadow: 0 0 0 2px #b9f33c, 0 0 18px rgba(155,48,255,.55); }
 .logo__word { font-family: var(--font-body); font-weight: 800; letter-spacing: .06em; color: #b9f33c; text-shadow: 0 0 14px rgba(155,48,255,.7); }
 .gate__mark { width: auto; height: auto; background: none; border-radius: 0; gap: .7rem; }
@@ -579,21 +624,25 @@ html, body { overflow-x: clip; }
 .hfl.out{opacity:0;visibility:hidden}
 .hfl__mark{width:132px;height:132px;border-radius:50%;box-shadow:0 0 0 3px #b9f33c,0 0 40px rgba(155,48,255,.65);animation:hfl-twist 1.6s cubic-bezier(.6,0,.3,1) infinite}
 @keyframes hfl-twist{0%{transform:rotate(0) scale(1)}35%{transform:rotate(-38deg) scale(.96)}50%{transform:rotate(-30deg) scale(1.03)}85%{transform:rotate(12deg) scale(.98)}100%{transform:rotate(0) scale(1)}}
-.hfl__j{position:relative;width:min(240px,62vw);height:18px}
-.hfl__paper{position:absolute;right:0;top:3px;height:12px;width:100%;border-radius:2px 7px 7px 2px;background:linear-gradient(#fffdf6,#e9e2cf);transition:width .35s ease-out;box-shadow:0 4px 14px rgba(0,0,0,.35)}
-.hfl__paper::after{content:"";position:absolute;right:0;top:0;bottom:0;width:22%;border-radius:0 7px 7px 0;background:repeating-linear-gradient(90deg,#c9b98f 0 2px,#b8a77a 2px 4px)}
-.hfl__ember{position:absolute;left:-6px;top:-2px;width:14px;height:14px;border-radius:50%;background:radial-gradient(circle,#fff6c2 0,#ffb13b 35%,#ff4d1f 65%,rgba(255,60,20,0) 72%);filter:drop-shadow(0 0 8px #ff7a2a);animation:hfl-glow .7s ease-in-out infinite alternate}
-@keyframes hfl-glow{to{filter:drop-shadow(0 0 14px #ff9a3a);transform:scale(1.15)}}
-.hfl__smoke{position:absolute;left:-10px;top:-4px;width:18px;height:18px;border-radius:50%;background:rgba(235,240,232,.55);filter:blur(6px);animation:hfl-rise 2.4s ease-out infinite;opacity:0}
-.hfl__smoke:nth-child(2){animation-delay:.8s}.hfl__smoke:nth-child(3){animation-delay:1.6s}
+.hfl__j{position:relative;width:min(260px,66vw);height:30px}
+.hfl__cone{position:absolute;left:0;top:0;width:85%;height:100%;clip-path:polygon(0 0,100% 27%,100% 73%,0 100%);filter:drop-shadow(0 4px 10px rgba(0,0,0,.35))}
+.hfl__paper{position:absolute;top:0;bottom:0;right:0;left:0;transition:left .35s ease-out;
+  background:radial-gradient(circle at 20% 30%,rgba(90,130,40,.55) 0 1.2px,transparent 1.8px) 0 0/9px 8px,radial-gradient(circle at 60% 70%,rgba(70,110,30,.45) 0 1px,transparent 1.6px) 3px 2px/11px 10px,
+  linear-gradient(180deg,#d9d3c0 0%,#fbf8ee 30%,#f4efe0 62%,#cfc7b0 100%)}
+.hfl__paper::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(100deg,transparent 0 26px,rgba(150,140,110,.25) 26px 27px)}
+.hfl__roach{position:absolute;right:0;top:27%;width:15.5%;height:46%;border-radius:2px 5px 5px 2px;background:linear-gradient(180deg,#e9e3d2,#fffdf6 40%,#d8d0bb);box-shadow:inset -5px 0 0 -2px rgba(120,100,70,.25)}
+.hfl__roach::after{content:"";position:absolute;right:-2px;top:0;bottom:0;width:7px;border-radius:50%;background:radial-gradient(circle at 40% 50%,transparent 0 22%,#b9ab88 24% 34%,#efe8d6 36% 52%,#b9ab88 54% 64%,#e8e0cb 66%)}
+.hfl__ember{position:absolute;top:50%;width:16px;height:30px;margin:-15px 0 0 -8px;border-radius:50%;background:radial-gradient(ellipse at 60% 50%,#fff2b0 0,#ffb13b 28%,#ff4d1f 55%,#5a1d10 72%,rgba(60,30,20,0) 76%);filter:drop-shadow(0 0 8px #ff7a2a);transition:left .35s ease-out,transform .35s ease-out;animation:hfl-glow .7s ease-in-out infinite alternate}
+@keyframes hfl-glow{to{filter:drop-shadow(0 0 15px #ff9a3a)}}
+.hfl__smoke{position:absolute;top:50%;width:18px;height:18px;margin:-9px 0 0 -9px;border-radius:50%;background:rgba(235,240,232,.55);filter:blur(6px);animation:hfl-rise 2.4s ease-out infinite;opacity:0;transition:left .35s ease-out}
+.hfl__smoke.s2{animation-delay:.8s;--d:-1}.hfl__smoke.s3{animation-delay:1.6s}.hfl__smoke:nth-child(3){animation-delay:1.6s}
 @keyframes hfl-rise{0%{opacity:0;transform:translate(0,0) scale(.6)}20%{opacity:.8}100%{opacity:0;transform:translate(calc(var(--d,1)*22px),-90px) scale(2.6)}}
-.hfl__smoke:nth-child(2){--d:-1}
 .hfl__t{font:600 1rem/1.3 system-ui,sans-serif;letter-spacing:.02em;color:#b9f33c;text-align:center;min-height:1.3em}
 @media (prefers-reduced-motion:reduce){.hfl__mark,.hfl__smoke,.hfl__ember{animation:none}}
 </style>
 <div class="hfl" id="hfl" role="status" aria-live="polite">
   <img class="hfl__mark" src="mark.webp" alt="HIGH 5" width="132" height="132">
-  <div class="hfl__j" aria-hidden="true"><div class="hfl__paper" id="hflP"><span class="hfl__smoke"></span><span class="hfl__smoke"></span><span class="hfl__smoke"></span><span class="hfl__ember"></span></div></div>
+  <div class="hfl__j" aria-hidden="true"><div class="hfl__cone"><div class="hfl__paper" id="hflP"></div></div><div class="hfl__roach"></div><span class="hfl__smoke" data-b></span><span class="hfl__smoke s2" data-b></span><span class="hfl__smoke s3" data-b></span><span class="hfl__ember" data-b></span></div>
   <p class="hfl__t" id="hflT">Grinding…</p>
 </div>
 <script>
@@ -602,9 +651,10 @@ html, body { overflow-x: clip; }
   var lines = ["Grinding…", "Packing it in…", "Rolling it up…", "Twisting the tip…", "Almost lit…"], li = 0;
   var tick = setInterval(function () { txt.textContent = lines[li = (li + 1) % lines.length]; }, 1100);
   var start = Date.now(), pageDone = false, frames = 0, NEED = 60, done = false;   // ~60 frames = the film's first passes, enough to scroll smoothly
-  function set() { var p = Math.min(1, (pageDone ? .5 : .15) + Math.min(frames, NEED) / NEED * .5); paper.style.width = (100 - p * 78) + "%"; }
+  function set() { var p = Math.min(1, (pageDone ? .5 : .15) + Math.min(frames, NEED) / NEED * .5); burn(p * 0.72); }
+  function burn(x) { paper.style.left = x * 100 + "%"; [].forEach.call(el.querySelectorAll("[data-b]"), function (b) { b.style.left = x * 85 + "%"; }); var e = el.querySelector(".hfl__ember"); e.style.transform = "scaleY(" + (1 - x * 0.46).toFixed(3) + ")"; }
   function finish() {
-    if (done) return; done = true; clearInterval(tick); paper.style.width = "22%"; txt.textContent = "Lit. Come in.";
+    if (done) return; done = true; clearInterval(tick); burn(0.72); txt.textContent = "Lit. Come in.";
     setTimeout(function () { el.classList.add("out"); setTimeout(function () { el.remove(); }, 700); }, Math.max(350, 1400 - (Date.now() - start)));
   }
   function check() { set(); if (pageDone && (frames >= NEED || !document.querySelector(".story-stage"))) finish(); }
@@ -822,6 +872,9 @@ html, body { overflow-x: clip; }
           <div class="gm__sprite gm__lidsprite" data-g-lidsprite></div>
           <div class="gm__filter" data-g-filter aria-hidden="true"><div class="gm__filter-card"></div><div class="gm__filter-tip"></div></div>
           <div class="gm__pinch" data-g-pinch></div>
+          <div class="gm__zone gm__zone--grinder" aria-hidden="true"></div>
+          <div class="gm__zone gm__zone--paper" aria-hidden="true"></div>
+          <div class="gm__finger" aria-hidden="true"></div>
         </div>
         <div class="gm__done" data-g-done hidden>
           <p class="gm__done-title">Rolled. Nicely done.</p>
@@ -1000,7 +1053,7 @@ html, body { overflow-x: clip; }
       $("[role=dialog]", gate).setAttribute("aria-labelledby", "gate-title");
       $("[data-gate-yes]", gate).focus();
     });
-    if (store.get() === "yes") closeGate(false); else openGate();
+    openGate();   // asked on every visit (user, 26 Nov)
   }
 
   /* ---------- Header glass + phone bar after the hero ---------- */
@@ -1857,12 +1910,27 @@ html, body { overflow-x: clip; }
     })(order[q++]);
   }
   function progress() { window.dispatchEvent(new CustomEvent("hf-frames", { detail: loaded })); if (bar) bar.style.width = (loaded / N * 100).toFixed(1) + "%"; if (loaded >= N && barWrap) barWrap.classList.add("is-done"); }
-  function nearest(i) { for (var d = 0; d < N; d++) { if (imgs[i - d]) return imgs[i - d]; if (imgs[i + d]) return imgs[i + d]; } return null; }
+  // 26 Nov (user: scrolling was jumpy): frames near the playhead are decoded ahead into ImageBitmaps (off the main thread),
+  // so drawing never stalls on a decode; far ones are closed again to keep phone memory down.
+  var bms = {}, bmPend = {}, bmBusy = 0, BMR = 8;
+  function bmFill() {
+    if (!window.createImageBitmap) return;
+    var c = Math.round(cur);
+    for (var k in bms) if (Math.abs(k - c) > BMR + 4) { if (bms[k].close) bms[k].close(); delete bms[k]; }
+    for (var d = 0; d <= BMR && bmBusy < 3; d++) [c + d, c - d].forEach(function (i) {
+      if (i < 0 || i >= N || bms[i] || bmPend[i] || !imgs[i] || bmBusy >= 3) return;
+      bmPend[i] = 1; bmBusy++;
+      createImageBitmap(imgs[i]).then(function (b) { bmBusy--; delete bmPend[i]; if (Math.abs(i - Math.round(cur)) > BMR + 4) { if (b.close) b.close(); } else { bms[i] = b; want = true; } bmFill(); }, function () { bmBusy--; delete bmPend[i]; });
+    });
+  }
+  function pic(i) { return bms[i] || imgs[i]; }
+  function nearest(i) { for (var d = 0; d < N; d++) { if (imgs[i - d]) return pic(i - d); if (imgs[i + d]) return pic(i + d); } return null; }
 
-  function size() { var dpr = Math.min(window.devicePixelRatio || 1, 2); canvas.width = Math.round(canvas.clientWidth * dpr); canvas.height = Math.round(canvas.clientHeight * dpr); want = true; }
+  function size() { var dpr = Math.min(window.devicePixelRatio || 1, 2), w = Math.round(canvas.clientWidth * dpr), h = Math.round(canvas.clientHeight * dpr); if (w !== canvas.width || h !== canvas.height) { canvas.width = w; canvas.height = h; } want = true; }   // same size: leave it (resetting clears the picture)
   function draw(f) {
     var im = nearest(Math.round(f)); if (!im) return;
-    var iw = im.naturalWidth, ih = im.naturalHeight, cw = canvas.width, ch = canvas.height;
+    var a = Math.floor(f), mix = f - a, A = imgs[a] && pic(a), B = imgs[a + 1] && pic(a + 1);   // blend the two frames either side, so the film glides instead of stepping
+    var iw = im.naturalWidth || im.width, ih = im.naturalHeight || im.height, cw = canvas.width, ch = canvas.height;
     ctx.imageSmoothingQuality = "high";
     if (comp) {
       // Portrait frame at full height, centred at ~68% of the width; the frame's left edge column (always clean
@@ -1885,7 +1953,8 @@ html, body { overflow-x: clip; }
     // Cover the screen. Desktop keeps the right side (where the product sits); phones keep the centre.
     var dx = set === "d" ? (cw - dw) * 0.75 : (cw - dw) / 2, dy = (ch - dh) / 2;
     ctx.imageSmoothingQuality = "high";
-    ctx.drawImage(im, dx, dy, dw, dh);
+    if (A && B && mix > 0.02 && mix < 0.98) { ctx.globalAlpha = 1; ctx.drawImage(A, dx, dy, dw, dh); ctx.globalAlpha = mix; ctx.drawImage(B, dx, dy, dw, dh); ctx.globalAlpha = 1; }
+    else ctx.drawImage(im, dx, dy, dw, dh);
   }
 
   var marks = [];
@@ -1906,8 +1975,8 @@ html, body { overflow-x: clip; }
   function frame() {
     raf = 0;
     var t = target(), d = t - cur;
-    cur = reduce.matches || Math.abs(d) < 0.35 ? t : cur + d * 0.16;
-    draw(cur);
+    cur = reduce.matches || Math.abs(d) < 0.02 ? t : cur + d * 0.14;
+    draw(cur); bmFill();
     if (Math.abs(t - cur) > 0.01) raf = requestAnimationFrame(frame);
   }
   function kick() { if (!raf) raf = requestAnimationFrame(frame); }
@@ -1939,7 +2008,9 @@ html, body { overflow-x: clip; }
   var buds = qa("[data-bud]"), ins = qa("[data-in]"), outs = qa("[data-out]"), steps = document.querySelectorAll("[data-g-step]");
   var stage, filled, angle, ground, load, roll, TURNS = 4, PINCHES = 5;
   var GX = 0.336, GY = 0.348, GR = 0.188;
-  var HINTS = { fill: "Drag the buds into the open grinder.", lid: "Now drag the lid on top.", grind: "Twist the lid round and round, or hold Grind.", load: "Pinch the weed onto the paper and roll the filter, in any order. Drag across the filter card to roll it, then drag it onto the end of the paper.", roll: "Drag up or down on the paper to roll it, or use the slider.", done: "" };
+  var TIPS = { fill: "Use your finger: drag each bud into the open grinder.", lid: "Now drag the lid onto the grinder.", grind: "Put your finger on the lid and twist it round and round.", load: "Scoop some out of the grinder with your finger and drop it on the paper. Rub the filter card to roll it, then slide it onto the end of the paper.", roll: "Swipe up and down on the paper to roll it.", done: "" };
+  var tipText = q("[data-g-tiptext]");
+  var HINTS = { fill: "Drag the buds into the open grinder.", lid: "Now drag the lid on top.", grind: "Twist the lid round and round with your finger.", load: "Pinch the weed onto the paper and roll the filter, in any order. Drag across the filter card to roll it, then drag it onto the end of the paper.", roll: "Swipe up and down on the paper to roll it.", done: "" };
 
   function say(t) { if (live) live.textContent = t; }
   function frac(e) { var r = tray.getBoundingClientRect(); return { x: (e.clientX - r.left) / r.width, y: (e.clientY - r.top) / r.height, w: r.width, h: r.height }; }
@@ -1955,7 +2026,7 @@ html, body { overflow-x: clip; }
       li.classList.toggle("is-done", order.indexOf(k) < order.indexOf(key));
     });
     bFill.hidden = s !== "fill"; bLid.hidden = s !== "lid"; bGrind.hidden = s !== "grind"; bLoad.hidden = s !== "load" || load >= 1; bFilter.hidden = s !== "load" || filterIn; rollWrap.hidden = s !== "roll"; done.hidden = s !== "done";
-    hint.textContent = HINTS[s]; paint();
+    hint.textContent = TIPS[s] || HINTS[s]; hint.classList.remove("pop"); void hint.offsetWidth; hint.classList.add("pop"); root.classList.remove("tip-off"); paint();
   }
   function paint() {
     ins.forEach(function (el, i) { el.style.opacity = filled > i ? 1 : 0; });
@@ -2010,6 +2081,7 @@ html, body { overflow-x: clip; }
     angle += deg; ground = Math.min(1, ground + Math.abs(deg) / (360 * TURNS)); paint();
     if (ground >= 1) { say("Ground. Now load the paper."); bGrind.hidden = true; hint.textContent = "Ground nicely."; setTimeout(function () { if (stage === "grind") setStage("load"); }, 800); }
   }
+  scene.addEventListener("pointerdown", function () { root.classList.add("tip-off"); }, true);
   scene.addEventListener("pointerdown", function (e) {
     if (drag) return;
     var p = frac(e);
