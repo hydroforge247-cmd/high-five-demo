@@ -609,8 +609,8 @@ html, body { overflow-x: clip; }
   }
   function check() { set(); if (pageDone && (frames >= NEED || !document.querySelector(".story-stage"))) finish(); }
   addEventListener("hf-frames", function (e) { frames = e.detail; check(); });
-  addEventListener("load", function () { pageDone = true; check(); });
-  setTimeout(finish, 10000);   // slow connection: never hold people out longer than this
+  document.addEventListener("DOMContentLoaded", function () { pageDone = true; check(); });   // not window load: the 11 MB page would hold people out too long
+  setTimeout(finish, 6000);   // slow connection: never hold people out longer than this
 })();
 </script>
 
