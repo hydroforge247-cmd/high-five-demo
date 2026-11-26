@@ -275,6 +275,9 @@ p { margin: 0; }
 
 /* ----- Visit + form ----- */
 .visit__grid { display: grid; gap: 2.5rem; }
+.visit__grid > *, .about__grid > *, .roller__grid > * { min-width: 0; } /* grid items would otherwise grow to their content and push the phone page wider than the screen */
+.details dd { overflow-wrap: anywhere; }
+html, body { overflow-x: clip; }
 @media (min-width: 960px) { .visit__grid { grid-template-columns: 1fr 1.05fr; gap: 4rem; align-items: start; } }
 .details { display: grid; gap: 0; margin: 1.8rem 0 0; border-top: 1px solid var(--line); }
 .details div { display: grid; grid-template-columns: 9.5rem 1fr; gap: 1rem; padding: .85rem 0; border-bottom: 1px solid var(--line); }
@@ -570,6 +573,47 @@ p { margin: 0; }
 </style>
 </head>
 <body class="gate-open">
+<!-- loader: logo twists like a grinder while a joint burns down with the load; lifts when the page and the film's first frames are in (max 10 s) -->
+<style>
+.hfl{position:fixed;inset:0;z-index:999;display:grid;place-items:center;align-content:center;gap:2.2rem;background:radial-gradient(120% 90% at 50% 35%,#17442f 0%,#06251a 70%);transition:opacity .6s,visibility .6s}
+.hfl.out{opacity:0;visibility:hidden}
+.hfl__mark{width:132px;height:132px;border-radius:50%;box-shadow:0 0 0 3px #b9f33c,0 0 40px rgba(155,48,255,.65);animation:hfl-twist 1.6s cubic-bezier(.6,0,.3,1) infinite}
+@keyframes hfl-twist{0%{transform:rotate(0) scale(1)}35%{transform:rotate(-38deg) scale(.96)}50%{transform:rotate(-30deg) scale(1.03)}85%{transform:rotate(12deg) scale(.98)}100%{transform:rotate(0) scale(1)}}
+.hfl__j{position:relative;width:min(240px,62vw);height:18px}
+.hfl__paper{position:absolute;right:0;top:3px;height:12px;width:100%;border-radius:2px 7px 7px 2px;background:linear-gradient(#fffdf6,#e9e2cf);transition:width .35s ease-out;box-shadow:0 4px 14px rgba(0,0,0,.35)}
+.hfl__paper::after{content:"";position:absolute;right:0;top:0;bottom:0;width:22%;border-radius:0 7px 7px 0;background:repeating-linear-gradient(90deg,#c9b98f 0 2px,#b8a77a 2px 4px)}
+.hfl__ember{position:absolute;left:-6px;top:-2px;width:14px;height:14px;border-radius:50%;background:radial-gradient(circle,#fff6c2 0,#ffb13b 35%,#ff4d1f 65%,rgba(255,60,20,0) 72%);filter:drop-shadow(0 0 8px #ff7a2a);animation:hfl-glow .7s ease-in-out infinite alternate}
+@keyframes hfl-glow{to{filter:drop-shadow(0 0 14px #ff9a3a);transform:scale(1.15)}}
+.hfl__smoke{position:absolute;left:-10px;top:-4px;width:18px;height:18px;border-radius:50%;background:rgba(235,240,232,.55);filter:blur(6px);animation:hfl-rise 2.4s ease-out infinite;opacity:0}
+.hfl__smoke:nth-child(2){animation-delay:.8s}.hfl__smoke:nth-child(3){animation-delay:1.6s}
+@keyframes hfl-rise{0%{opacity:0;transform:translate(0,0) scale(.6)}20%{opacity:.8}100%{opacity:0;transform:translate(calc(var(--d,1)*22px),-90px) scale(2.6)}}
+.hfl__smoke:nth-child(2){--d:-1}
+.hfl__t{font:600 1rem/1.3 system-ui,sans-serif;letter-spacing:.02em;color:#b9f33c;text-align:center;min-height:1.3em}
+@media (prefers-reduced-motion:reduce){.hfl__mark,.hfl__smoke,.hfl__ember{animation:none}}
+</style>
+<div class="hfl" id="hfl" role="status" aria-live="polite">
+  <img class="hfl__mark" src="mark.webp" alt="HIGH 5" width="132" height="132">
+  <div class="hfl__j" aria-hidden="true"><div class="hfl__paper" id="hflP"><span class="hfl__smoke"></span><span class="hfl__smoke"></span><span class="hfl__smoke"></span><span class="hfl__ember"></span></div></div>
+  <p class="hfl__t" id="hflT">Grinding…</p>
+</div>
+<script>
+(function () {
+  var el = document.getElementById("hfl"), paper = document.getElementById("hflP"), txt = document.getElementById("hflT");
+  var lines = ["Grinding…", "Packing it in…", "Rolling it up…", "Twisting the tip…", "Almost lit…"], li = 0;
+  var tick = setInterval(function () { txt.textContent = lines[li = (li + 1) % lines.length]; }, 1100);
+  var start = Date.now(), pageDone = false, frames = 0, NEED = 60, done = false;   // ~60 frames = the film's first passes, enough to scroll smoothly
+  function set() { var p = Math.min(1, (pageDone ? .5 : .15) + Math.min(frames, NEED) / NEED * .5); paper.style.width = (100 - p * 78) + "%"; }
+  function finish() {
+    if (done) return; done = true; clearInterval(tick); paper.style.width = "22%"; txt.textContent = "Lit. Come in.";
+    setTimeout(function () { el.classList.add("out"); setTimeout(function () { el.remove(); }, 700); }, Math.max(350, 1400 - (Date.now() - start)));
+  }
+  function check() { set(); if (pageDone && (frames >= NEED || !document.querySelector(".story-stage"))) finish(); }
+  addEventListener("hf-frames", function (e) { frames = e.detail; check(); });
+  addEventListener("load", function () { pageDone = true; check(); });
+  setTimeout(finish, 10000);   // slow connection: never hold people out longer than this
+})();
+</script>
+
 <div class="story-stage" data-story data-frames-p="487" data-frames-d="487" data-ends-p="34,147,260,373,487" data-ends-d="34,147,260,373,487" aria-hidden="true"><canvas></canvas><div class="story-veil"></div><div class="story-load"><span></span></div></div>
 
 <!-- 18+ age gate. Answer is remembered in localStorage ("hf-age-18"). No cookies, nothing sent anywhere. -->
@@ -1812,7 +1856,7 @@ p { margin: 0; }
       im.src = src(i);
     })(order[q++]);
   }
-  function progress() { if (bar) bar.style.width = (loaded / N * 100).toFixed(1) + "%"; if (loaded >= N && barWrap) barWrap.classList.add("is-done"); }
+  function progress() { window.dispatchEvent(new CustomEvent("hf-frames", { detail: loaded })); if (bar) bar.style.width = (loaded / N * 100).toFixed(1) + "%"; if (loaded >= N && barWrap) barWrap.classList.add("is-done"); }
   function nearest(i) { for (var d = 0; d < N; d++) { if (imgs[i - d]) return imgs[i - d]; if (imgs[i + d]) return imgs[i + d]; } return null; }
 
   function size() { var dpr = Math.min(window.devicePixelRatio || 1, 2); canvas.width = Math.round(canvas.clientWidth * dpr); canvas.height = Math.round(canvas.clientHeight * dpr); want = true; }
